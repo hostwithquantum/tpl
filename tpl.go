@@ -1,8 +1,9 @@
 package tpl
 
 import (
+	"github.com/Masterminds/sprig/v3"
+
 	"embed"
-	"encoding/json"
 	"html/template"
 	"log/slog"
 	"net/http"
@@ -18,10 +19,7 @@ func NewRender(fs embed.FS, name string) *Render {
 }
 
 func (r *Render) Render(w http.ResponseWriter, tmpl string, data any) {
-	t := template.New(r.name).Funcs(template.FuncMap{"toJSON": func(v any) string {
-		b, _ := json.MarshalIndent(v, "", "  ")
-		return string(b)
-	}})
+	t := template.New(r.name).Funcs(sprig.FuncMap())
 
 	t, err := t.ParseFS(
 		r.fs, "templates/layout.gotmpl", "templates/"+tmpl+".gotmpl")
